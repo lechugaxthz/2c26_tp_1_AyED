@@ -1,0 +1,7 @@
+#ignoraremos los .aux, .log y .pdf
+# cada uno puede compilar el suyo
+# el subirlos nos dara problemas al mergear
+
+*.aux
+*.log
+*.pdf

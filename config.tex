@@ -1,0 +1,101 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[spanish]{babel}
+
+\title{TP LaTeX 3Compu, un infiltrado}
+\author{
+    \textbf{Integrantes:} \\
+        Hector Gomez\\
+        Leonardo Bravo\\
+        Avril Tapia\\ 
+        Lautaro Garcia
+    }
+\date{Septiembre 13 2026}
+
+% comandos personalizados !
+
+% Math
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+
+% math secuencias
+\newcommand{\seq}[1]{\langle#1\rangle}
+\newcommand{\seqq}{\subseteq}
+\newcommand{\set}[3]{\text{setAt} (#1,#2,#3)}
+
+
+
+% math diccionarios
+\newcommand{\dict}[1]{\text{dict}\{#1\}}
+
+
+% espacios
+\newcommand{\QN}[1]{\hspace*{#1em}}
+
+% implicaciones
+\newcommand{\imp}{\rightarrow}
+\newcommand{\impl}{\rightarrow_{\text{L}}}
+
+% types
+% #1 = nombre del tipo
+% #2 = descripcion del tipo
+\newcommand{\type}[2]{&\text{type } #1:~#2\\}
+
+% observadores
+% #1 = nombre del observador
+% #2 = tipado del observador
+\newcommand{\obs}[2]{&\QN2\text{obs } #1:~#2\\}
+
+% func aux
+% #1 = nombre de la funcion
+% #2 = funcion
+\newcommand{\aux}[2]{&\QN2\textbf{aux } \text{#1} = #2}
+
+% requiere y asegura
+
+% requiere
+% #1 = condiciones de requiere
+\newcommand{\req}[1]{%
+  & \QN{4} \textbf{requiere:}~\{ \\%
+  & \QN{6} #1 \\%
+  & \QN{4} \}%
+}
+
+% asegura
+% #1 = condiciones de asegura
+\newcommand{\aseg}[1]{%
+  & \QN{4} \textbf{asegura:}~\{ \\%
+  & \QN{6} #1 \\%
+  & \QN{4} \}%
+}
+
+% proc 
+% #1 = nombre del procedimiento
+% #2 = parametros de entrada
+% #3 = parametros de salida
+% #4 = requiere
+% #5 = asegura
+\newcommand{\proc}[5]{%
+  & \QN{2} \textbf{proc } \text{#1} (#2): \text{#3} \{ \\%
+  \req{#4} \\%
+  \aseg{#5} \\%
+  & \QN{2} \}%
+}
+
+% tad
+% #1 = nombre del TAD
+% #2 = contenido del TAD (procedimientos, auxiliares, etc)
+\newcommand{\tad}[2]{%
+  \begin{aligned}
+    & \textbf{TAD: } \text{#1} \{ \\
+    #2 \\
+    & \}
+  \end{aligned}%
+}
+
+% IDEA PRINCIPAL:
+% Imp un solo \tad {nombre} {contenido}
+% contenido iremos poniendo \proc{}{}{}{}{}\\
+%                           \aux{}{}\\
+% y si tenemos que hacer pred, hacemos otro command para eso y lo agregamos

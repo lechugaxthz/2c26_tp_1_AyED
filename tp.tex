@@ -1,0 +1,27 @@
+\documentclass{report}
+\input{config.tex}
+
+
+\begin{document}
+    \maketitle
+    \begin{abstract}
+        \text{Trabajo practico 1, Especificacion  \LaTeX{}}\\
+        \textbf{TAD: Sistema de fidelizaci\'on AirMiles}\\
+        \text{Grupo}\textbf{``3 Compus y 1 infiltrado''}.\\
+        \text{Sistema de acumilacion de millas y canje de premios.}
+    \end{abstract}
+    \begin{aligned}
+        \type{usuario}{int}
+        \type{codigo}{string}
+        \type{transaccion}{enum~\langle emisor, receptor, vuelo, canje, referido\rangle}
+        \type{categoria}{enum~\langle bronce, plata, oro, platino\rangle}
+        \type{historial}{\text{seq}\seq{\text{struct}\seq{transaccion, monto, codigo}}}
+        \type{emision}{\text{seq}\seq{usuario}}
+
+
+        \tad{AirMiles}{
+            \obs{usuarios}{\dict{usuario, \langle historial, emision\rangle}}
+            \obs{promos}{\dict{codigo, tope}}
+        }
+    \end{aligned}
+\end{document}
