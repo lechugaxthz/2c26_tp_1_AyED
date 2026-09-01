@@ -13,15 +13,16 @@
     \begin{aligned}
         \type{usuario}{int}
         \type{codigo}{string}
-        \type{transaccion}{enum~\langle emisor, receptor, vuelo, canje, referido\rangle}
+        \type{tipoTransaccion}{enum~\langle transferencia, vuelo, canje, referido\rangle}
         \type{categoria}{enum~\langle bronce, plata, oro, platino\rangle}
-        \type{historial}{\text{seq}\seq{\text{struct}\seq{transaccion, monto, codigo}}}
-        \type{emision}{\text{seq}\seq{usuario}}
-
-
+        \type{transaccionid}{int}
+        \type{millas}{double}
+        \type{factorPromocional}{double}
+        
         \tad{AirMiles}{
-            \obs{usuarios}{\dict{usuario, \langle historial, emision\rangle}}
-            \obs{promos}{\dict{codigo, tope}}
+            \obs{usuarios}{\conj{usuario}}
+            \obs{transaccion}{\seq{struc{transaccionid, usuario, millas, codigoPromocional, tipoTransaccion}}}
+            \obs{promos}{\dict{codigo, factorPromocional ,tope}}
         }
     \end{aligned}
 \end{document}
