@@ -1,5 +1,5 @@
-\documentclass{report}
 \input{config.tex}
+\documentclass{report}
 
 
 \begin{document}
@@ -8,20 +8,65 @@
         \text{Trabajo practico 1, Especificacion  \LaTeX{}}\\
         \textbf{TAD: Sistema de fidelizaci\'on AirMiles}\\
         \text{Grupo}\textbf{``3 Compus y 1 infiltrado''}.\\
-        \text{Sistema de acumilacion de millas y canje de premios.}
+        \text{Sistema de acumilacion de millas y canje de premios.}\\
     \end{abstract}
     \begin{aligned}
         \type{usuario}{int}
+        \type{millas}{int}
         \type{codigo}{string}
         \type{transaccion}{enum~\langle emisor, receptor, vuelo, canje, referido\rangle}
         \type{categoria}{enum~\langle bronce, plata, oro, platino\rangle}
-        \type{historial}{\text{seq}\seq{\text{struct}\seq{transaccion, monto, codigo}}}
+        \type{historial}{\text{seq}\seq{\text{struct}\seq{transaccion, millas, codigo}}}
         \type{emision}{\text{seq}\seq{usuario}}
-
-
         \tad{AirMiles}{
+            &\\
             \obs{usuarios}{\dict{usuario, \langle historial, emision\rangle}}
-            \obs{promos}{\dict{codigo, tope}}
+            \obs{promos}{\dict{codigo, \langle factor, tope \rangle}}
+            &\\
+            &\\
+            \aux{millasDisponibles (h: historial)}{ \sum_{k=0}^{|h|-1}~\ift{h[k].transaccion = "emision" \lor h[k].transaccion = "canje"}{-h[k].monto}{h[k].monto}}
+            &\\
+            \aux{millasAcumuladas (h: historial)}{ \sum_{k=0}^{|h|-1} \ift{h[k].transaccion = "emision" \lor h[k].transaccion = "canje"}{0}{h[k].monto}}
+            &\\
+            \aux{millasCanjeadas(h: historial)}{ \sum_{k=0}^{|h|-1} \ift{h[k].transaccion = "canje"}{h[k].monto}{0}}
+            &\\
+            \aux{sonExclusivos (e1: umision, e2: emision, u1: usuario, u2: usuario)}{ ((|e1|,|e2| > 0)\land (\forall j: e1) j = u2 ) \land ((\forall k: e2) k = u1 ) }
+            &\\
+            \pred{factorCategoriaUsuario}{in~h: historial}{\R}{ ((millasAcumuladas(h) < 10000 \imp res = 1 ) \land ( 10000 \leq millasAcumuladas(h) < 50000 \imp res = 1.5) \land ( 50000 \leq millasAcumuladas(h) < 1000000 \imp res = 2 ) \land ( 1000000 = millasAcumuladas(h) \imp res = 0))}
+            &\\
+            \proc{registrarUsuarioConReferidor}{inout~a: AirMiles, in~u: UsuarioID}{}{
+                a = a_0 \land u \in claves(a_0.usuarios)  
+            }{
+                a.promos = a_0.promos \land (\exists i: int)( \\
+                &\QN8  i \notin claves(a_0.usuarios) \land_l\\
+                &\QN8 a.ausuario~=~setKey(\\
+                &\QN{12} setKey(a_0,i,\langle \langle \langle "referido", 500, "NoPromo"  \rangle  \rangle, \langle \rangle \rangle),\\
+                &\QN{12}u,\langle concat(a_0[u].historial, \langle  "referido", 500, "NoPromo"  \rangle), u_0[u].emision \rangle) \\
+                &\QN8 )
+            }
+            &\\
+            \proc{consultarSaldo}{inout~a: AirMiles, in~u: UsuarioID}{millas}{
+                a=a_0 \land u \in claves(a_0.usuarios)
+            }{
+                a.promos = a_0.promos \land a.usuarios = a_0.usuarios \land res= millasDisponibles(u)
+            }
+            &\\
+            \proc{iniciarPromocion}{inout~a: AirMiles, in~codigo: string, in~f: \R}{}{
+                a = a_0 \land codigo \notin claves(a_0.promos) \land f \geq 1
+            }{
+                a.usuarios = a_0.usuarios \land a.promos = setKey(a_0, codigo, \langle f , 0 \rangle)
+            }
+            &\\
+            \proc{elMasCanjeador}{inout~a= AirMiles}{usuarioID}{
+                |claves(a.usuarios)| > 1
+            }{
+                (\exists res : usuarioID) (res \in claves(a.usuarios) \land_l \\
+                & \QN8 (\forall u: usuadioID) (u \in claves(a.usuarios) \impl \\
+                & \QN{12} millasCanjeadas(res) \geq millasCanjeadas(u)  \\
+                & \QN6 ))
+            }
+
         }
+
     \end{aligned}
 \end{document}

@@ -1,6 +1,6 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage[spanish]{babel}
+\usepackage[a4paper, left=2.5cm, right=2.5cm, top=3cm, bottom=3cm]{geometry}
 
 \title{TP LaTeX 3Compu, un infiltrado}
 \author{
@@ -33,24 +33,31 @@
 % espacios
 \newcommand{\QN}[1]{\hspace*{#1em}}
 
-% implicaciones
+% implicaciones, Y, O
 \newcommand{\imp}{\rightarrow}
 \newcommand{\impl}{\rightarrow_{\text{L}}}
+
 
 % types
 % #1 = nombre del tipo
 % #2 = descripcion del tipo
-\newcommand{\type}[2]{&\text{type } #1:~#2\\}
+\newcommand{\type}[2]{&\text{type}~#1:~#2\\}
+
+% if then else
+% #1 = condicion
+% #2 = si es verdadero
+% #3 = si es falso
+\newcommand{\ift}[3]{\text(IfThenElseIf)(#1,#2,#3)}
 
 % observadores
 % #1 = nombre del observador
 % #2 = tipado del observador
-\newcommand{\obs}[2]{&\QN2\text{obs } #1:~#2\\}
+\newcommand{\obs}[2]{&\QN2\text{obs } #1=~#2\\}
 
 % func aux
 % #1 = nombre de la funcion
 % #2 = funcion
-\newcommand{\aux}[2]{&\QN2\textbf{aux } \text{#1} = #2}
+\newcommand{\aux}[2]{&\QN2\textbf{aux } \text{#1} = #2\\}
 
 % requiere y asegura
 
@@ -83,15 +90,19 @@
   & \QN{2} \}%
 }
 
+\newcommand{\pred}[4]{%
+  & \QN{2} \textbf{pred } \text{#1} (#2): \text{#3} \{ \\%
+  & \QN4 #4 \\%
+  & \QN{2} \}%
+}
+
 % tad
 % #1 = nombre del TAD
 % #2 = contenido del TAD (procedimientos, auxiliares, etc)
 \newcommand{\tad}[2]{%
-  \begin{aligned}
     & \textbf{TAD: } \text{#1} \{ \\
     #2 \\
-    & \}
-  \end{aligned}%
+    & \}%
 }
 
 % IDEA PRINCIPAL:
