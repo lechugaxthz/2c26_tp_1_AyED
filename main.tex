@@ -1,0 +1,146 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[left=2.5cm,top=3cm,right=2.5cm,bottom=3cm,bindingoffset=0.5cm]{geometry}
+\usepackage{macros/AEDLogica, macros/AEDEspecificacion, macros/AEDTADs}
+\usepackage{caratula}
+
+
+\titulo{Trabajo práctico 1}
+\subtitulo{Especificación: TAD Sistema de fidelización AirMiles}
+
+\fecha{\today}
+
+\materia{Algoritmos y Estructuras de Datos}
+\grupo{3 Compus y 1 infiltrado}
+
+\integrante{Bravo, Leonardo}{217/24}{bravopleo@gmail.com}
+\integrante{Tapia, Lautaro}{1104/24}{lautarogonzalezgarcia@outlook.com} %
+\integrante{Apellido, Avril}{1420/25}{celeste.avril@gmail.com} %
+\integrante{Gómez, Héctor}{921/23}{hectorluisgomezmoya@gmail.com} %
+
+\graphicspath{{../static/}}
+
+\newcommand{\Tipo}[1]{\mathsf{#1}}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Trabajo práctico 1: especificación del \textbf{TAD Sistema de fidelización AirMiles},
+un sistema de acumulación de millas y canje de premios.
+Grupo \textbf{``3 Compus y 1 infiltrado''}.
+\end{abstract}
+
+
+\section{Renombres de tipos}
+
+\ES{idUsuario}{$\Z$}
+\\
+\ES{millas}{$\R$}
+\\
+\ES{codigo}{$\str$}
+\\
+\ES{tope}{$\Z$}
+\\
+\enum{tipoTransaccion}{emisor, receptor, vuelo, canje, referido}
+\\
+\ES{transaccion}{$\struct{tipo: tipoTransaccion,\ monto: millas,\ promo: codigo}$}
+\\
+\ES{historial}{$\seq{transaccion}$}
+\\
+\ES{emision}{$\seq{usuario}$}
+\\
+\ES{infoUsuario}{$\struct{historial: historial,\ emision: emision}$}
+\\
+
+\section{Especificación del TAD}
+
+\begin{tad}{AirMiles}
+
+\medskip
+
+\obs{usuarios}{\dicc{idUsuario}{infoUsuario}}\\
+\obs{promos}{\dicc{codigo}{\langle factorPromocional,tope \rangle}}
+
+\medskip
+\medskip
+
+\begin{proc}{registrarUsuario}
+{
+\Inout a: \Tipo{AirMiles},
+}{}
+    \requiereCorto{a = A_0}
+    %\yLuego u \notin \claves{a_0.usuarios}}
+    \asegura{  \existe{k}{idUsuario}{k \notin \claves{A_0.usuarios}} \land \\
+    a.usuarios = \setKey{A_0.usuarios}{k}{\literal{\vacio, \vacio}} \land \\
+              a.promos = A_0.promos }
+\end{proc}
+
+% a,usuarios[u1].historial
+
+\begin{proc}{transferirMillas}
+{
+\In u_1: idUsuario, \In u_2: idUsuario, \\ \tab
+\In m: millas, \Inout a: AirMiles
+}{}
+    \requiere{ a = A_0 \yLuego u_1 \in \claves{A_0.usuarios} \land u_2 \in \claves{A_0.usuarios} \yLuego \\
+               u_1 \neq u_2 \land m > 0 \land millasDisponibles(A_0[u_1].historial) \geq m \\
+               \land factorCategoriaUsuario(u_2) \neq 0}
+    \asegura{ \claves{a} = \claves{A_0} \land \\
+              a.usuarios[u_1].historial = A_0.usuarios[u_1].historial \concat \literal{\literal{emisor, m, NoPromo}} \land \\
+              a.usuarios[u_1].emision = A_0.usuarios[u_1].emision \concat \literal{u_2} \land \\
+              a.usuarios[u_2].historial = A_0.usuarios[u_2].historial \concat \literal{\literal{receptor, m, NoPromo}} \land \\
+              a.usuarios[u_2].emision = A_0.usuarios[u_2].emision \land \\
+              %restrinjo que no se cambie nada mas del resto de los usuarios%
+              \paraTodo{k}{idUsuario}{(k \in \claves{A_0.usuarios} \land k \neq u_1 \land k \neq u_2) \implicaLuego \\
+              a.usuarios[k] = A_0.usuarios[k]} }
+\end{proc}
+
+
+\begin{proc}{resumenTransacciones}
+{
+\In u: idUsuario,
+\In a: AirMiles 
+}{
+\tupla{\R, \R, \R}
+}
+    \requiereCorto{u \in \claves{a.usuarios}}
+    \asegura{ res = \literal{ totalMillasPorVuelo(a.usuarios[u].historial), \\
+              totalMillasCanjeadas(a.usuarios[u].historial), \\
+              totalMillasEmitidasRecibidas(a.usuarios[u].historial) } }
+\end{proc}
+
+
+\begin{proc}{elQueTieneMasMillas}
+{
+\In a: \Tipo{AirMiles}}{idUsuario}
+    \requiereCorto{\claves{a.usuarios} \neq \emptyset}
+    \asegura{ res \in \claves{a.usuarios} \land \\
+              \paraTodo{k}{usuario}{k \in \claves{a.usuarios} \implicaLuego \\
+              millasAcumuladas(a.usuarios[k].historial) \leq \\ millasAcumuladas(a.usuarios[res].historial)} }
+\end{proc}
+
+\medskip
+
+\auxCorto{millasAcumuladas}{h: historial}{\R}{\sum_{i=0}^{\longitud{h}-1} h[i].monto}
+
+\aux{totalMillasPorVuelo}{h: historial}{\R}{
+    \sum_{i=0}^{\longitud{h}-1} \IfThenElse{h[i].tipo = vuelo}{h[i].monto}{0}
+}
+
+\aux{totalMillasCanjeadas}{h: historial}{\R}{
+    \sum_{i=0}^{\longitud{h}-1} \IfThenElse{h[i].tipo = canje}{h[i].monto}{0}
+}
+
+% Cuenta tanto las millas emitidas como las recibidas.
+\aux{totalMillasEmitidasRecibidas}{h: historial}{\R}{
+    \sum_{i=0}^{\longitud{h}-1} \IfThenElse{h[i].tipo = emisor \lor h[i].tipo = receptor}{h[i].monto}{0}
+}
+
+
+\end{tad}
+
+\end{document}
