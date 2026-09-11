@@ -1,8 +1,6 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
-
+\usepackage[a4paper, left=2.5cm, right=2.5cm, top=3cm, bottom=3cm]{geometry}
 
 \title{TP LaTeX 3Compu, un infiltrado}
 \author{
@@ -17,48 +15,55 @@
 % comandos personalizados !
 
 % Math
-\newcommand{\Nn}{\mathbb{N}}
-\newcommand{\Zz}{\mathbb{Z}}
-\newcommand{\Rr}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
 
 % math secuencias
-\newcommand{\seqt}[1]{\langle#1\rangle}
+\newcommand{\seq}[1]{\langle#1\rangle}
 \newcommand{\seqq}{\subseteq}
 \newcommand{\set}[3]{\text{setAt} (#1,#2,#3)}
 
 
 
 % math diccionarios
-\newcommand{\dictc}[1]{\text{dict}\{#1\}}
+\newcommand{\dict}[1]{\text{dict}\{#1\}}
 
 
 % espacios
-\newcommand{\QN}[1]{\hspace*{#1{em}}}
+\newcommand{\QN}[1]{\hspace*{#1em}}
 
-% implicaciones
+% implicaciones, Y, O
 \newcommand{\imp}{\rightarrow}
 \newcommand{\impl}{\rightarrow_{\text{L}}}
+
 
 % types
 % #1 = nombre del tipo
 % #2 = descripcion del tipo
-\newcommand{\type}[2]{&\text{type } #1:~#2\\}
+\newcommand{\type}[2]{&\text{type}~#1:~#2\\}
+
+% if then else
+% #1 = condicion
+% #2 = si es verdadero
+% #3 = si es falso
+\newcommand{\ift}[3]{\text(IfThenElseIf)(#1,#2,#3)}
 
 % observadores
 % #1 = nombre del observador
 % #2 = tipado del observador
-\newcommand{\obse}[2]{&\QN2\text{obs } #1:~#2\\}
+\newcommand{\obs}[2]{&\QN2\text{obs } #1=~#2\\}
 
 % func aux
 % #1 = nombre de la funcion
 % #2 = funcion
-\newcommand{\auxi}[2]{&\QN2\textbf{aux } \text{#1} = #2}
+\newcommand{\aux}[2]{&\QN2\textbf{aux } \text{#1} = #2\\}
 
 % requiere y asegura
 
 % requiere
 % #1 = condiciones de requiere
-\newcommand{\reqi}[1]{%
+\newcommand{\req}[1]{%
   & \QN{4} \textbf{requiere:}~\{ \\%
   & \QN{6} #1 \\%
   & \QN{4} \}%
@@ -78,22 +83,26 @@
 % #3 = parametros de salida
 % #4 = requiere
 % #5 = asegura
-\newcommand{\proce}[5]{%
+\newcommand{\proc}[5]{%
   & \QN{2} \textbf{proc } \text{#1} (#2): \text{#3} \{ \\%
   \req{#4} \\%
   \aseg{#5} \\%
   & \QN{2} \}%
 }
 
+\newcommand{\pred}[4]{%
+  & \QN{2} \textbf{pred } \text{#1} (#2): \text{#3} \{ \\%
+  & \QN4 #4 \\%
+  & \QN{2} \}%
+}
+
 % tad
 % #1 = nombre del TAD
 % #2 = contenido del TAD (procedimientos, auxiliares, etc)
-\newcommand{\tadx}[2]{%
-  \begin{aligned}
+\newcommand{\tad}[2]{%
     & \textbf{TAD: } \text{#1} \{ \\
     #2 \\
-    & \}
-  \end{aligned}%
+    & \}%
 }
 
 % IDEA PRINCIPAL:
