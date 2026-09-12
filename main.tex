@@ -87,7 +87,7 @@ Grupo \textbf{``3 Compus y 1 infiltrado''}.
 \In m: millas, \Inout a: AirMiles
 }{}
     \requiere{ a = A_0 \yLuego u_1 \in \claves{A_0.usuarios} \land u_2 \in \claves{A_0.usuarios} \yLuego \\
-               u_1 \neq u_2 \land m > 0 \land millasDisponibles(A_0[u_1].historial) \geq m \\
+               u_1 \neq u_2 \land m > 0 \land millasDisponibles(A_0.usuarios[u_1].historial) \geq m \\
                \land factorCategoriaUsuario(u_2) \neq 0}
     \asegura{ \claves{a} = \claves{A_0} \land \\
               a.usuarios[u_1].historial = A_0.usuarios[u_1].historial \concat \literal{\literal{emisor, m, NoPromo}} \land \\
@@ -119,7 +119,7 @@ Grupo \textbf{``3 Compus y 1 infiltrado''}.
 \In a: \Tipo{AirMiles}}{idUsuario}
     \requiereCorto{\claves{a.usuarios} \neq \emptyset}
     \asegura{ res \in \claves{a.usuarios} \land \\
-              \paraTodo{k}{usuario}{k \in \claves{a.usuarios} \implicaLuego \\
+              \paraTodo{k}{idUsuario}{k \in \claves{a.usuarios} \implicaLuego \\
               millasAcumuladas(a.usuarios[k].historial) \leq \\ millasAcumuladas(a.usuarios[res].historial)} }
 \end{proc}
 
