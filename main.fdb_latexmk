@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1792191843.72616 "main.tex" "main.pdf" "main" 1792191844.45279 0
+["pdflatex"] 1792873274.50566 "/home/hectorluisgm/Documents/2c26_tp_1_AyED/main.tex" "main.pdf" "main" 1792873275.42047 2
   "/home/hectorluisgm/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map" 1792191283.0663 25678 aa7c8fd3909e804e7d85441c21595406 ""
   "/home/hectorluisgm/.miktex/texmfs/data/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk" 1792191284.22562 12668 506c8e9c2606db65dd4952e1f95034cc ""
   "/home/hectorluisgm/.miktex/texmfs/data/miktex/data/le/pdftex/pdflatex.fmt" 1792190187.02224 10202434 ca3958a320a4c62d6570f1e6d243f5c2 ""
@@ -26,7 +26,9 @@
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmsy10.tfm" 1792190151.7677 1124 6c73e740cf17375f03eec0ee63599741 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmsy6.tfm" 1792190151.76798 1116 933a60c408fc0a863a92debe84b2d294 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmsy8.tfm" 1792190151.76824 1120 8b7d695260f3cff42e636090a8002094 ""
+  "/home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmti10.tfm" 1792190151.76908 1480 aa8e34af0eb6a2941b776984cf1dfdc4 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmtt10.tfm" 1792190151.76964 768 1321e9409b4137d6fb428ac9dc956269 ""
+  "/home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmtt8.tfm" 1792190151.77002 768 d7b9a2629a0c353102ad947dc9221d49 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1792191246.03182 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1792191246.03453 32080 340ef9bf63678554ee606688e7b5339d ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1792191246.05145 30251 6afa5cb1d0204815a708a080681d4674 ""
@@ -39,6 +41,7 @@
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmssbx10.pfb" 1792191246.08707 28902 2f5c04fd2884d1878057baa5aad22765 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1792191246.09465 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1792191246.09933 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
+  "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb" 1792191246.10549 37944 359e864bd06cde3b1cf57bb20757fb06 ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmtt10.pfb" 1792191246.11132 31099 c85edf1dd5b9e826d67c9c7293b6786c ""
   "/home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1792191246.16658 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/home/hectorluisgm/.miktex/texmfs/install/tex/context/base/mkii/supp-pdf.mkii" 1792191256.97225 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -72,6 +75,7 @@
   "/home/hectorluisgm/.miktex/texmfs/install/tex/latex/graphics/trig.sty" 1792190190.75037 4023 5a4fcfe68d7c6df02f94d7bf578e99fd ""
   "/home/hectorluisgm/.miktex/texmfs/install/tex/latex/l3kernel/l3backend-pdftex.def" 1792190148.91743 31824 60c8410f6fc024f189369cb45fa634af ""
   "/home/hectorluisgm/.miktex/texmfs/install/tex/latex/xstring/xstring.sty" 1792191254.252 123 a302f2c651a95033260db60e51527ae8 ""
+  "/home/hectorluisgm/Documents/2c26_tp_1_AyED/main.tex" 1792873270.93635 28660 66761f2d9d0c913052b9377836473af1 ""
   "caratula.sty" 1792184622.90072 11307 b7d6c7f15260a7fe039ae1559c1c577c ""
   "logo_dc.jpg" 1792184622.90275 128041 19e4b2b1b4914681ffe3d5d821eeea3c ""
   "logo_uba.jpg" 1792184622.90672 229119 10f3a63be47e1e95e44f30008ec3af50 ""
@@ -79,8 +83,8 @@
   "macros/AEDLogica.sty" 1792184622.90772 1843 b1ddd2df874b0f6463d6201c296153ca ""
   "macros/AEDTADs.sty" 1792184622.90772 1563 026dbdfb0a453b03e8d8c38afb4d7629 ""
   "macros/AEDUtil.sty" 1792184622.90772 1227 432dcf54717c1ce69691bc7a56773928 ""
-  "main.aux" 1792191844.2492 875 2ca576e4fc7a49d4f2fc1ea9320a33f8 "pdflatex"
-  "main.tex" 1792191841.59916 20822 185f6480894875ad963b8f8ccbca33de ""
+  "main.aux" 1792873274.99946 856 6ce354577db96d96ceee7651232f3473 "pdflatex"
+  "main.tex" 1792873270.93635 28660 66761f2d9d0c913052b9377836473af1 ""
   (generated)
   "main.aux"
   "main.log"

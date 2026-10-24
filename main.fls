@@ -1,6 +1,6 @@
 PWD /home/hectorluisgm/Documents/2c26_tp_1_AyED
 INPUT /home/hectorluisgm/.miktex/texmfs/data/miktex/data/le/pdftex/pdflatex.fmt
-INPUT main.tex
+INPUT /home/hectorluisgm/Documents/2c26_tp_1_AyED/main.tex
 OUTPUT main.log
 INPUT /home/hectorluisgm/.miktex/texmfs/install/tex/latex/base/article.cls
 INPUT /home/hectorluisgm/.miktex/texmfs/install/tex/latex/base/article.cls
@@ -104,7 +104,6 @@ INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmr8.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmr12.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
-INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/jknappen/ec/tcrm1095.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmr6.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmmi10.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmmi8.tfm
@@ -127,8 +126,12 @@ INPUT /home/hectorluisgm/.miktex/texmfs/install/tex/latex/amsfonts/umsb.fd
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmtt8.tfm
+INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmtt8.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmss8.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmss8.tfm
+INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/jknappen/ec/tcrm1095.tfm
+INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/tfm/public/cm/cmti10.tfm
 INPUT /home/hectorluisgm/.miktex/texmfs/install/tex/latex/base/omscmr.fd
 INPUT /home/hectorluisgm/.miktex/texmfs/install/tex/latex/base/omscmr.fd
 INPUT /home/hectorluisgm/.miktex/texmfs/install/tex/latex/base/omscmr.fd
@@ -159,6 +162,8 @@ INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/c
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy8.pfb
+INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb
+INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmti10.pfb
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmtt10.pfb
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmtt10.pfb
 INPUT /home/hectorluisgm/.miktex/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb
