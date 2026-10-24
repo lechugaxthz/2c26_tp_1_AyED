@@ -6,140 +6,440 @@
 \usepackage{caratula}
 
 
-\titulo{Trabajo práctico 1}
-\subtitulo{Especificación: TAD Sistema de fidelización AirMiles}
+\titulo{Trabajo práctico}
+\subtitulo{AirMiles}
 
 \fecha{\today}
 
 \materia{Algoritmos y Estructuras de Datos}
-\grupo{3 Compus y 1 infiltrado}
+\grupo{3 Compu y 1 Infiltrado}
 
 \integrante{Bravo, Leonardo}{217/24}{bravopleo@gmail.com}
-\integrante{Tapia, Lautaro}{1104/24}{lautarogonzalezgarcia@outlook.com} %
-\integrante{Apellido, Avril}{1420/25}{celeste.avril@gmail.com} %
-\integrante{Gómez, Héctor}{921/23}{hectorluisgomezmoya@gmail.com} %
+\integrante{Garcia, Lautaro}{1104/24}{lautarogonzalezgarcia@outlook.com} % CORRECCIÓN: decía "Tapia, Lautaro"
+\integrante{Tapia, Avril}{1420/25}{celeste.avril.023@gmail.com}
+\integrante{Gómez, Héctor}{921/23}{hectorluisgomezmoya@gmail.com}
 
 \graphicspath{{../static/}}
 
+% Tipos y valores de enum (en sans-serif, como en la entrega)
 \newcommand{\Tipo}[1]{\mathsf{#1}}
+% Tipo "dict" (la macro \dicc de la cátedra escribe "dicc")
+\newcommand{\dict}[2]{\Tipo{dict}\langle #1, #2 \rangle}
+% Texto entre comillas dentro de modo matemático
+\newcommand{\comillas}[1]{\textnormal{''}#1\textnormal{''}}
+% xor
+\newcommand{\xor}{\oplus}
+% Renombre de tipos: \renombre{nombre}{tipo}
+\newcommand{\renombre}[2]{type #1: $#2$}
 
 
 \begin{document}
 
 \maketitle
 
-\begin{abstract}
-Trabajo práctico 1: especificación del \textbf{TAD Sistema de fidelización AirMiles},
-un sistema de acumulación de millas y canje de premios.
-Grupo \textbf{``3 Compus y 1 infiltrado''}.
-\end{abstract}
+\newpage
 
+% =====================================================================
+\section{Renombres de tipos y notas}
+% =====================================================================
 
-\section{Renombres de tipos}
+\subsection{Notas}
 
-\ES{idUsuario}{$\Z$}
-\\
-\ES{millas}{$\R$}
-\\
-\ES{codigo}{$\str$}
-\\
-\ES{tope}{$\Z$}
-\\
-\enum{tipoTransaccion}{emisor, receptor, vuelo, canje, referido}
-\\
-\ES{transaccion}{$\struct{tipo: tipoTransaccion,\ monto: millas,\ promo: codigo}$}
-\\
-\ES{historial}{$\seq{transaccion}$}
-\\
-\ES{emision}{$\seq{usuario}$}
-\\
-\ES{infoUsuario}{$\struct{historial: historial,\ emision: emision}$}
-\\
+\begin{itemize}
+    \item $\xor$ ($\lor$ exclusivo): sean $a$ y $b$ proposiciones lógicas,
+          $a \xor b = (a\ \land\ \lnot b) \lor (\lnot a\ \land\ b)$
+    \item En el desarrollo de la implementación del TAD a continuación, en base a la información
+          brindada del mismo en el enunciado del trabajo práctico, consideramos no necesario
+          guardar el registro de cierta información, ya que si el TAD requiriese de la misma
+          para desarrollar sus procedimientos y/u operaciones la tendriamos en cuenta y la
+          registraríamos en alguno de nuestros observadores.
+          % CORRECCIÓN: "Mmm pero hay cosas que el enunciado si solicita y hay que acatar a ello."
+\end{itemize}
 
+\subsection{Renombres}
+
+% CORRECCIÓN: "No es la notación y los tipos se deben escribir con mayúscula."
+% CORRECCIÓN (id): "id es positivo, los naturales incluyen al 0"
+% CORRECCIÓN (historial): "No es la forma de escribir un struct."
+\noindent
+\renombre{id}{\N} \\
+\renombre{millas}{\R} \\
+\renombre{factor}{\R} \\
+\renombre{tope}{\R} \\
+\renombre{codigo}{\Tipo{string}} \\
+\renombre{tieneTope}{\Tipo{bool}} \\
+\renombre{transaccion}{\Tipo{enum}\ \langle emisor, receptor, vuelo, canje, referido \rangle} \\
+\renombre{categoria}{\Tipo{enum}\ \langle bronce, plata, oro, platino \rangle} \\
+\renombre{historial}{\Tipo{seq}\langle \Tipo{struct}\langle \Tipo{transaccion}, \Tipo{millas}, \Tipo{codigo} \rangle \rangle} \\
+\renombre{emision}{\Tipo{seq}\langle \Tipo{id} \rangle}
+
+\bigskip
+
+% =====================================================================
 \section{Especificación del TAD}
+% =====================================================================
 
 \begin{tad}{AirMiles}
 
+% ---------------------------------------------------------------------
+\subsection{Observadores}
+% ---------------------------------------------------------------------
+
+% CORRECCIÓN: "No es la forma de escribir un struct"
+\obs{usuarios}{\dict{\Tipo{id}}{\Tipo{struct}\langle \Tipo{historial}, \Tipo{emision} \rangle}} \\
+\obs{promos}{\dict{\Tipo{codigo}}{\Tipo{struct}\langle \Tipo{factor}, \Tipo{tope}, \Tipo{tieneTope} \rangle}}
+
+\bigskip
+
+% ---------------------------------------------------------------------
+\subsection{Auxiliares}
+% ---------------------------------------------------------------------
+
+% CORRECCIÓN: "Los enum no son strings, no van entre comillas. emisor != emision."
+\aux{millasDisponibles}{h: \Tipo{historial}}{\R}{
+    \sum_{k=0}^{|h|-1} \Tipo{IfThenElse}(h[k].transaccion = \comillas{emision} \lor \\
+    \tab\tab h[k].transaccion = \comillas{canje}, \\
+    \tab\tab - h[k].millas, \\
+    \tab\tab h[k].millas)
+}
+
+\aux{millasAcumuladas}{h: \Tipo{historial}}{\R}{
+    \sum_{k=0}^{|h|-1} \IfThenElse{h[k].transaccion = \comillas{emision} \lor h[k].transaccion = \comillas{canje}}{0}{h[k].millas}
+}
+
+% CORRECCIÓN: "Repetida" (es igual a totalMillasCanjeadas)
+\aux{millasCanjeadas}{h: \Tipo{historial}}{\R}{
+    \sum_{k=0}^{|h|-1} \IfThenElse{h[k].transaccion = \comillas{canje}}{h[k].millas}{0}
+}
+
+% CORRECCIÓN: "es un pred porque devuelve un bool."
+% CORRECCIÓN: "Mal uso de cuantificadores. La sintaxis es ((cuantificador) nombreDelArgumento: TipoDeDato).
+%              Lo están aplicando a una lista y no funciona así."
+% CORRECCIÓN: "faltan paréntesis. Esto aparece más abajo. Tenían que borrarlo."
+\aux{sonExclusivos}{e1: \Tipo{emision}, e2: \Tipo{emision}, u1: \Tipo{id}, u2: \Tipo{id}}{\Tipo{bool}}{
+    ((|e1|, |e2| > 0) \land (\forall j: e1) j = u2) \land ((\forall k: e2) k = u1)
+}
+
+\aux{totalMillasPorVuelo}{h: \Tipo{historial}}{\R}{
+    \sum_{i=0}^{|h|-1} \IfThenElse{h[i].transaccion = \comillas{vuelo}}{h[i].millas}{0}
+}
+
+% CORRECCIÓN: "Repetida" (es igual a millasCanjeadas)
+\aux{totalMillasCanjeadas}{h: \Tipo{historial}}{\R}{
+    \sum_{i=0}^{|h|-1} \IfThenElse{h[i].transaccion = \comillas{canje}}{h[i].millas}{0}
+}
+
+% Antes era totalMillasEmitidasRecibidas y sumaba emitidas y recibidas juntas (se perdía información).
+% Ahora se separa en dos auxiliares: uno para las emitidas y otro para las recibidas.
+\aux{totalMillasEmitidas}{h: \Tipo{historial}}{\R}{
+    \sum_{i=0}^{|h|-1} \IfThenElse{h[i].transaccion = \Tipo{emisor}}{h[i].millas}{0}
+}
+
+\aux{totalMillasRecibidas}{h: \Tipo{historial}}{\R}{
+    \sum_{i=0}^{|h|-1} \IfThenElse{h[i].transaccion = \Tipo{receptor}}{h[i].millas}{0}
+}
+
+\noindent\texttt{aux millasGanadasPorVuelo}$(distancia: \R, historial: \Tipo{historial}, factorPromo: \Tipo{factor}):$ \\
+$\R = distancia \cdot factorCategoriaUsuario(historial) \cdot factorPromo$
+
 \medskip
 
-\obs{usuarios}{\dicc{idUsuario}{infoUsuario}}\\
-\obs{promos}{\dicc{codigo}{\langle factorPromocional,tope \rangle}}
+% CORRECCIÓN: "Rebuscado. Los auxiliares no tienen tipo pasaje de parámetro" (sobra el "in")
+\aux{factorCategoriaUsuario}{\In h: \Tipo{historial}}{\R}{
+    (1 + factorCondicional(millasAcumuladas(h), 0.5, 0, 10000) + \\
+    factorCondicional(millasAcumuladas(h), 0.5, 0, 50000)) \\
+    \cdot factorCondicional(millasAcumuladas(h), 0, 1, 1000000)
+}
 
-\medskip
-\medskip
+\aux{factorCondicional}{m: millas, factor1: \R, factor2: \R, rango: \N}{\R}{
+    \IfThenElse{m \geq rango}{factor1}{factor2}
+}
 
-\begin{proc}{registrarUsuario}
-{
-\Inout a: \Tipo{AirMiles},
-}{}
+% ---------------------------------------------------------------------
+\subsection{Predicados}
+% ---------------------------------------------------------------------
+
+% CORRECCIÓN: "indexa usuarios[ranking[i]] sin que nada garantice que ranking[i] sea un usuario. Se indefine."
+\pred{esRankingOrdenado}{ranking: \seq{\Tipo{id}}, usuarios: \dict{\Tipo{id}}{\langle \Tipo{historial}, \Tipo{emision} \rangle}}{
+    \paraTodo{i}{\Z}{0 \leq i < |ranking| - 1 \implicaLuego \\
+    millasDisponibles(usuarios[ranking[i]].historial) \\
+    \geq millasDisponibles(usuarios[ranking[i+1]].historial)}
+}
+
+\pred{tieneALosTopN}{ranking: \seq{\Tipo{id}}, usuarios: \dict{\Tipo{id}}{\langle \Tipo{historial}, \Tipo{emision} \rangle}}{
+    (\forall i, j: \Tipo{id})\ ((j \in ranking \land j \in \claves{usuarios} \land i \in \claves{usuarios} \land i \notin \\
+    ranking) \implicaLuego \\
+    millasDisponibles(usuarios[i].historial) \leq millasDisponibles(usuarios[j].historial))
+}
+
+\pred{esPromoValida}{promo: \Tipo{struct}\langle \Tipo{factor}, \Tipo{tope}, \Tipo{tieneTope} \rangle, millasAGanar: \Tipo{millas}}{
+    (\lnot promo.tieneTope \implica promo.tope = 0) \land \\
+    \tab (promo.tieneTope \implica millasAGanar \leq promo.tope)
+}
+
+\pred{sonExclusivos}{emisiones_1: \seq{\Tipo{id}}, emisiones_2: \seq{\Tipo{id}}, u_1: \Tipo{id}, u_2: \Tipo{id}}{
+    esUnicoEmisor(emisiones_1, u_2) \land esUnicoEmisor(emisiones_2, u_1)
+}
+
+\pred{esUnicoEmisor}{emisiones: \seq{\Tipo{id}}, emisor: \Tipo{id}}{
+    |emisiones| > 0 \land \paraTodo{i}{\Z}{0 \leq i < |emisiones| \implicaLuego emisiones[i] = emisor}
+}
+
+% ---------------------------------------------------------------------
+\subsection{Procedimientos}
+% ---------------------------------------------------------------------
+
+\begin{proc}{crearSistema}{}{\Tipo{Airmiles}}
+    \requiereCorto{True}
+    \aseguraCorto{res.usuarios = \{\ \} \ \land\ res.promos = \{\comillas{NoPromo} : \langle 1, 0, False \rangle\}}
+\end{proc}
+
+\begin{proc}{registrarUsuario}{\Inout a: \Tipo{AirMiles}}{}
     \requiereCorto{a = A_0}
-    %\yLuego u \notin \claves{a_0.usuarios}}
-    \asegura{  \existe{k}{idUsuario}{k \notin \claves{A_0.usuarios}} \land \\
-    a.usuarios = \setKey{A_0.usuarios}{k}{\literal{\vacio, \vacio}} \land \\
-              a.promos = A_0.promos }
+    \asegura{
+        \existe{k}{id}{k \notin \claves{A_0.usuarios} \yLuego \\
+        a.usuarios = \setKey{A_0.usuarios}{k}{\langle \vacio, \vacio \rangle}} \land \\
+        a.promos = A_0.promos
+    }
 \end{proc}
 
-% a,usuarios[u1].historial
-
-\begin{proc}{transferirMillas}
-{
-\In u_1: idUsuario, \In u_2: idUsuario, \\ \tab
-\In m: millas, \Inout a: AirMiles
-}{}
-    \requiere{ a = A_0 \yLuego u_1 \in \claves{A_0.usuarios} \land u_2 \in \claves{A_0.usuarios} \yLuego \\
-               u_1 \neq u_2 \land m > 0 \land millasDisponibles(A_0.usuarios[u_1].historial) \geq m \\
-               \land factorCategoriaUsuario(u_2) \neq 0}
-    \asegura{ \claves{a} = \claves{A_0} \land \\
-              a.usuarios[u_1].historial = A_0.usuarios[u_1].historial \concat \literal{\literal{emisor, m, NoPromo}} \land \\
-              a.usuarios[u_1].emision = A_0.usuarios[u_1].emision \concat \literal{u_2} \land \\
-              a.usuarios[u_2].historial = A_0.usuarios[u_2].historial \concat \literal{\literal{receptor, m, NoPromo}} \land \\
-              a.usuarios[u_2].emision = A_0.usuarios[u_2].emision \land \\
-              %restrinjo que no se cambie nada mas del resto de los usuarios%
-              \paraTodo{k}{idUsuario}{(k \in \claves{A_0.usuarios} \land k \neq u_1 \land k \neq u_2) \implicaLuego \\
-              a.usuarios[k] = A_0.usuarios[k]} }
+\begin{proc}{registrarUsuarioConReferidor}{\Inout a: \Tipo{AirMiles}, \In u: \Tipo{id}}{}
+    \requiereCorto{a = a_0 \land u \in \claves{a_0.usuarios}}
+    \asegura{
+        a.promos = a_0.promos \land \\
+        \tab (\exists i: id)\ ( \\
+        \tab\tab i \notin \claves{a_0.usuarios} \yLuego \\
+        \tab\tab a.usuarios = setKey( \\
+        \tab\tab\tab setKey( \\
+        \tab\tab\tab\tab a_0.usuarios, \\
+        \tab\tab\tab\tab i, \\
+        \tab\tab\tab\tab \langle \langle \langle \Tipo{Referido}, 500, \textnormal{''NoPromo''} \rangle \rangle, \vacio \rangle), \\
+        \tab\tab\tab u, \\
+        \tab\tab\tab \langle\ a_0.usuarios[u].historial \concat \langle \langle \Tipo{Referido}, 500, \textnormal{''NoPromo''} \rangle \rangle, \\
+        \tab\tab\tab\ a_0.usuarios[u].emision\ \rangle \\
+        \tab\tab ) \\
+        \tab )
+    }
 \end{proc}
 
+% CORRECCIÓN: "El enunciado pide guardar distancia volada y factor de promoción aplicado."
+\begin{proc}{acumularMillas}{\Inout a: \Tipo{AirMiles}, \In id: \Tipo{id}, \In distancia: \R, \In codigo: \Tipo{codigo}}{}
+    \requiere{
+        a = A_0 \land \\
+        distancia > 0 \land \\
+        id \in \claves{a.usuarios} \land \\
+        codigo \in \claves{a.promos} \yLuego \\
+        esPromoValida( \\
+        \tab promo, % CORRECCIÓN: "promo no existe"
+        \\
+        \tab millasGanadasPorVuelo(distancia, A_0.usuarios[id].historial, A_0.promos[codigo].factor) \\
+        )
+    }
+    \asegura{
+        a.usuarios = setKey( \\
+        \tab A_0.usuarios, \\
+        \tab id, \\
+        \tab \langle A_0.usuarios[id].historial \concat \\
+        \tab\tab \langle \langle \\
+        \tab\tab\tab \Tipo{vuelo}, \\
+        \tab\tab\tab millasGanadasPorVuelo( \\
+        \tab\tab\tab\tab distancia, \\
+        \tab\tab\tab\tab A_0.usuarios[id].historial, \\
+        \tab\tab\tab\tab A_0.promos[codigo].factor \\
+        \tab\tab\tab ), \\
+        \tab\tab\tab codigo \\
+        \tab\tab \rangle \rangle, \\
+        \tab\tab A_0.usuarios[id].emisiones % CORRECCIÓN: el corrector tachó la "es" (el campo es emision)
+        \\
+        \tab \rangle \\
+        ) \land ( \\
+        \tab (\lnot A_0.promos[codigo].tieneTope \implica a.promos = A_0.promos) \land \\
+        \tab (A_0.promos[codigo].tieneTope \land \\
+        \tab\tab millasGanadasPorVuelo( \\
+        \tab\tab\tab distancia, \\
+        \tab\tab\tab A_0.usuarios[id].historial, \\
+        \tab\tab\tab A_0.promos[codigo].factor \\
+        \tab\tab ) < A_0.promos[codigo].tope \implica \\
+        \tab\tab\tab a.promos = setKey( \\
+        \tab\tab\tab\tab A_0.promos, \\
+        \tab\tab\tab\tab codigo, \\
+        \tab\tab\tab\tab \langle \\
+        \tab\tab\tab\tab\tab A_0.promos[codigo].factor, \\
+        \tab\tab\tab\tab\tab A_0.promos[codigo].tope - \\
+        \tab\tab\tab\tab\tab\tab millasGanadasPorVuelo( \\
+        \tab\tab\tab\tab\tab\tab\tab distancia, \\
+        \tab\tab\tab\tab\tab\tab\tab A_0.usuarios[id].historial, \\
+        \tab\tab\tab\tab\tab\tab\tab A_0.promos[codigo].factor \\
+        \tab\tab\tab\tab\tab\tab ), \\
+        \tab\tab\tab\tab\tab A_0.promos[codigo].tieneTope \\
+        \tab\tab\tab\tab \rangle \\
+        \tab\tab\tab ) \\
+        \tab ) \land \\
+        \tab (A_0.promos[codigo].tieneTope \land \\
+        \tab\tab millasGanadasPorVuelo( \\
+        \tab\tab\tab distancia, \\
+        \tab\tab\tab A_0.usuarios[id].historial, \\
+        \tab\tab\tab A_0.promos[codigo].factor \\
+        \tab\tab ) = A_0.promos[codigo].tope) \implica \\
+        \tab\tab\tab\tab a.promos = delKey(A_0.promos, codigo) \\
+        \tab ) \\
+        )
+    }
+\end{proc}
 
-\begin{proc}{resumenTransacciones}
-{
-\In u: idUsuario,
-\In a: AirMiles 
-}{
-\tupla{\R, \R, \R}
-}
+% CORRECCIÓN: "Por lo general, por convención se pone primero el inout."
+% CORRECCIÓN (asegura): "A0.usuarios, no?" (setKey se aplica a A0 en vez de A0.usuarios)
+\begin{proc}{canjearMillas}{\In cantidadMillas: \Tipo{millas}, \In u: \Tipo{id}, \In premio: \Tipo{codigo}, \\ \Inout a: \Tipo{AirMiles}}{}
+    \requiere{
+        a = A_0\ \land\ cantidadMillas > 0\ \land\ u \in a.usuarios\ \yLuego \\
+        millasDisponibles(a.usuarios[u].historial) \geq cantidadMillas
+    }
+    \noindent\texttt{asegura} \{ $a.usuarios = \mathsf{setKey}(A_0, u,$ \\
+    $\langle A_0.usuarios[u].historial \concat \langle \langle canje, cantidadMillas, premio \rangle \rangle, A_0.usuarios[u].emision \rangle) \land$ \\
+    $a.promos = A_0.promos$ \}
+\end{proc}
+
+% ---------------------------------------------------------------------
+% transferirMillas (Héctor)
+% CORRECCIONES:
+%  - requiere: "yLuego protege solo a u1 != u2; el índice queda detrás de un and común y se indefine.
+%               El primer yLuego no hace falta."
+%  - requiere: factorCategoriaUsuario(u_2): "Aplican la función a un id, no a un historial."
+%  - asegura:  a_0.usuarios[a1] y a_0.usuarios[u]: "a1 y u de dónde salen?"
+%  - asegura:  emision ++ <<u2>>: "agrega una secuencia en lugar de un id"
+%  - asegura:  "El receptor no guarda de quién recibió"
+% ---------------------------------------------------------------------
+\begin{proc}{transferirMillas}{\In u_1: \Tipo{id}, \In u_2: \Tipo{id}, \In m: \Tipo{millas}, \Inout a: \Tipo{AirMiles}}{}
+    \noindent\texttt{requiere} \{ $a = A_0 \yLuego u_1 \in \claves{A_0.usuarios} \land u_2 \in \claves{A_0.usuarios} \yLuego$ \\
+    \tab\tab $u_1 \neq u_2 \land m > 0 \land millasDisponibles(A_0.usuarios[u_1].historial) \geq m$ \\
+    \tab\tab $\land\ factorCategoriaUsuario(u_2) \neq 0$ \} \par
+    \asegura{
+        a.promos = a_0.promos \land \\
+        a.usuarios = setKey( \\
+        \tab\tab\tab\tab\tab setKey( \\
+        \tab\tab\tab\tab\tab\tab a_0.usuarios, \\
+        \tab\tab\tab\tab\tab\tab u1, \\
+        \tab\tab\tab\tab\tab\tab \langle A_0.usuarios[u_1].historial \concat \langle \langle \Tipo{emisor}, m, NoPromo \rangle \rangle, \\
+        \tab\tab\tab\tab\tab\tab a_0.usuarios[a1].emision \concat \langle \langle u_2 \rangle \rangle \rangle), \\
+        \tab\tab\tab\tab\tab u_2, \\
+        \tab\tab\tab\tab\tab \langle\ a_0.usuarios[u_2].historial \concat \langle \langle \Tipo{receptor}, m, NoPromo \rangle \rangle, \\
+        \tab\tab\tab\tab\tab a_0.usuarios[u].emision\ \rangle \\
+        \tab\tab\tab\tab )
+    }
+\end{proc}
+
+\begin{proc}{consultarSaldo}{\In a: \Tipo{AirMiles}, \In u: \Tipo{id}}{\Tipo{millas}}
     \requiereCorto{u \in \claves{a.usuarios}}
-    \asegura{ res = \literal{ totalMillasPorVuelo(a.usuarios[u].historial), \\
-              totalMillasCanjeadas(a.usuarios[u].historial), \\
-              totalMillasEmitidasRecibidas(a.usuarios[u].historial) } }
+    \asegura{
+        res = millasDisponibles(a.usuarios[u].historial)
+    }
 \end{proc}
 
+% CORRECCIÓN: "string != enum." (categoria es un enum, no van strings entre comillas)
+% CORRECCIÓN: "Rebuscado el usar el factor para definir la categoría."
+\begin{proc}{consultarCategoria}{\In a: \Tipo{AirMiles}, \In u: \Tipo{id}}{\Tipo{categoria}}
+    \requiereCorto{u \in \claves{a.usuarios}}
+    \asegura{
+        (factorCategoriaUsuario(a.usuarios[u].historial) = 1 \implica res = \comillas{Bronce}) \land \\
+        (factorCategoriaUsuario(a.usuarios[u].historial) = 1.5 \implica res = \comillas{Plata}) \land \\
+        (factorCategoriaUsuario(a.usuarios[u].historial) = 2 \implica res = \comillas{Oro}) \land \\
+        (factorCategoriaUsuario(a.usuarios[u].historial) = 0 \implica res = \comillas{Platino})
+    }
+\end{proc}
 
-\begin{proc}{elQueTieneMasMillas}
-{
-\In a: \Tipo{AirMiles}}{idUsuario}
+% CORRECCIÓN: "Está mal: con n = 2 y 5 usuarios, |res| = 2 hace verdaderos los dos lados y el xor da falso.
+%              Falta 'sin repetidos' y que los elementos de res sean usuarios."
+\begin{proc}{rankingMillas}{\In n: \Z, \In a: \Tipo{AirMiles}}{\seq{\Tipo{id}}}
+    \requiereCorto{n \geq 1}
+    \asegura{
+        (\,|res| = n \iff n \leq |a.usuarios|\,) \xor (\,|res| = |a.usuarios| \iff n > \\
+        |a.usuarios|\,) \land esRankingOrdenado(res, a.usuarios) \land tieneAlosTopN(res, a.usuarios)
+    }
+\end{proc}
+
+% ---------------------------------------------------------------------
+% resumenTransacciones (Héctor)
+% Corregido: devuelve 4 valores para no mezclar millas enviadas y recibidas:
+% <por vuelo, canjeadas, transferidas enviadas, transferidas recibidas>
+% ---------------------------------------------------------------------
+\begin{proc}{resumenTransacciones}{\In u: \Tipo{id}, \In a: \Tipo{AirMiles}}{\langle \R, \R, \R, \R \rangle}
+    \requiereCorto{u \in \claves{a.usuarios}}
+    \asegura{
+        res = \langle totalMillasPorVuelo(a.usuarios[u].historial), \\
+        \tab totalMillasCanjeadas(a.usuarios[u].historial), \\
+        \tab totalMillasEmitidas(a.usuarios[u].historial), \\
+        \tab totalMillasRecibidas(a.usuarios[u].historial) \rangle
+    }
+\end{proc}
+
+\begin{proc}{iniciarPromocion}{\Inout a: \Tipo{AirMiles}, \In cod: \Tipo{codigo}, \In f: \Tipo{factor}}{}
+    \requiereCorto{a = a_0 \land cod \notin \claves{a_0.promos} \land f \geq 1}
+    \noindent\texttt{asegura} \{ $(a.usuarios = a_0.usuarios) \land$ \\
+    $(a.promos = \setKey{a_0.promos}{cod}{\langle f, 0, False \rangle})$ \}
+\end{proc}
+
+\begin{proc}{iniciarPromocionConTope}{\Inout a: \Tipo{AirMiles}, \In codigo: \Tipo{codigo}, \In factor: \Tipo{factor}, \allowbreak \In tope: \Tipo{tope}}{}
+    \requiere{
+        a = a_0 \land \\
+        factor \geq 1 \land \\
+        tope > 0 \land \\
+        (codigo \notin \claves{a.promos})
+    }
+    \asegura{
+        a.usuarios = a_0.usuarios \land a.promos = setKey(a_0.promos, codigo, \langle factor, tope, True \rangle)
+    }
+\end{proc}
+
+\begin{proc}{finalizarPromocion}{\In promoActiva: \Tipo{codigo}, \Inout a: \Tipo{AirMiles}}{}
+    \noindent\texttt{requiere} \{ $a = A_0\ \land\ promoActiva \in a.promos\ \land$ \\
+    \tab\tab\tab $\lnot(\ promoActiva = \comillas{NoPromo}\ )$ \} \par
+    \noindent\texttt{asegura} \{ $a.usuarios = a_0.usuarios \land a.promos = \delKey{A_0.promos}{promoActiva}$ \\
+    \tab \} \par
+\end{proc}
+
+% ---------------------------------------------------------------------
+% elQueTieneMasMillas (Héctor)
+% CORRECCIÓN: "Innecesario el existe res. Ya tenemos res como palabra reservada
+%              para lo que devuelve el proc."
+% ---------------------------------------------------------------------
+\begin{proc}{elQueTieneMasMillas}{\In a: \Tipo{AirMiles}}{id}
     \requiereCorto{\claves{a.usuarios} \neq \emptyset}
-    \asegura{ res \in \claves{a.usuarios} \land \\
-              \paraTodo{k}{idUsuario}{k \in \claves{a.usuarios} \implicaLuego \\
-              millasAcumuladas(a.usuarios[k].historial) \leq \\ millasAcumuladas(a.usuarios[res].historial)} }
+    \noindent\texttt{asegura} \{ $(\exists\ res: \Tipo{id})(res \in \claves{a.usuarios} \yLuego$ \\
+    \tab\tab $(\forall k: \Tipo{id})\ (k \in \claves{a.usuarios} \implicaLuego$ \\
+    \tab\tab $millasAcumuladas(a.usuarios[k].historial) \leq$ \\
+    \tab\tab $millasAcumuladas(a.usuarios[res].historial)))$ \} \par
 \end{proc}
 
-\medskip
+% CORRECCIÓN: "Mismo problema con res."
+% CORRECCIÓN (requiere): "Por qué no puedo tener un solo usuario?"
+% CORRECCIÓN: "Releer el enunciado porque está incompleta la cuenta."
+\begin{proc}{elMasCanjeador}{\In a: \Tipo{AirMiles}}{id}
+    \requiereCorto{|\claves{a.usuarios}| > 1}
+    \asegura{
+        (\exists\ res: \Tipo{id})(res \in \claves{a.usuarios} \yLuego \\
+        \tab (\forall u: \Tipo{id})\ (u \in \claves{a.usuarios} \implicaLuego \\
+        \tab\tab millasCanjeadas(a.usuarios[res].historial) \geq \\
+        \tab\tab millasCanjeadas(a.usuarios[u].historial) \\
+        \tab ))
+    }
+\end{proc}
 
-\auxCorto{millasAcumuladas}{h: historial}{\R}{\sum_{i=0}^{\longitud{h}-1} h[i].monto}
-
-\aux{totalMillasPorVuelo}{h: historial}{\R}{
-    \sum_{i=0}^{\longitud{h}-1} \IfThenElse{h[i].tipo = vuelo}{h[i].monto}{0}
-}
-
-\aux{totalMillasCanjeadas}{h: historial}{\R}{
-    \sum_{i=0}^{\longitud{h}-1} \IfThenElse{h[i].tipo = canje}{h[i].monto}{0}
-}
-
-% Cuenta tanto las millas emitidas como las recibidas.
-\aux{totalMillasEmitidasRecibidas}{h: historial}{\R}{
-    \sum_{i=0}^{\longitud{h}-1} \IfThenElse{h[i].tipo = emisor \lor h[i].tipo = receptor}{h[i].monto}{0}
-}
-
+% CORRECCIÓN: "Insatisfacible si existe un par exclusivo: sonExclusivos es simétrico,
+%              así que para (A,B) se exige <A,B> in res y <B,A> notIn res, y para (B,A) lo contrario.
+%              Falta que todo lo que está en res sea exclusivo."
+\begin{proc}{paresTransferidoresExclusivos}{\In a: \Tipo{AirMiles}}{\seq{\langle \Tipo{id}, \Tipo{id} \rangle}}
+    \requiereCorto{True}
+    \asegura{
+        (\forall u_1, u_2: \Tipo{id})\ ( \\
+        \tab (u_1 \in \claves{a.usuarios} \land u_2 \in \claves{a.usuarios} \land u_1 \neq u_2) \yLuego \\
+        \tab sonExclusivos(a.usuarios[u_1].emisiones, a.usuarios[u_2].emisiones, u_1, u_2) \\
+        \tab \implicaLuego \\
+        \tab\tab (\exists i: \Z)\ (0 \leq i < |res| \yLuego res[i] = \langle u_1, u_2 \rangle \land \\
+        \tab\tab\tab (\forall k: \Z)\ (0 \leq k < |res| \yLuego res[k] = \langle u_1, u_2 \rangle \implicaLuego k = i)) \land \\
+        \tab\tab \lnot(\exists j: \Z)\ (0 \leq j < |res| \yLuego res[j] = \langle u_2, u_1 \rangle) \\
+        )
+    }
+\end{proc}
 
 \end{tad}
 
